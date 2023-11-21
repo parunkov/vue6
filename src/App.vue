@@ -1,7 +1,9 @@
 <template>
   <v-app>
     <v-main>
-      <TagsList :tags="tags" />
+      <div class="main">
+        <TagsList :tags="tags" />
+      </div>
     </v-main>
   </v-app>
 </template>
@@ -17,11 +19,18 @@ export default {
   },
 
   data: () => ({
-      tags: [
-        {text: '4,3'},
-        {text: 'Фридланские ворота'},
-        {text: '1,2 км от вас'}
-      ]
+    tags: [
+      { text: '4,3' },
+      { text: 'Фридланские ворота' },
+      { text: '1,2 км от вас' }
+    ]
   }),
 };
 </script>
+<style lang="scss" scoped>
+.main {
+  padding: 20px;
+  overflow-x: hidden;
+  font-size: 40px;
+}
+</style>
