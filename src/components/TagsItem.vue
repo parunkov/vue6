@@ -1,22 +1,31 @@
 <template>
-    <div class="tag" v-intersect="{
-        handler: onIntersect,
-        options: {
-            threshold: [1.0]
-        }
-    }">{{ text }}</div>
+    <div class="tag">
+        <div v-if="icon" class="tag__icon">
+            <v-icon>{{ icon }}</v-icon>
+        </div>
+        <div class="tag__text">{{ text }}</div>
+    </div>
 </template>
 <script>
 export default {
-    props: ['text', 'index'],
+    props: ['text', 'icon', 'index'],
     data: () => ({
-        isIntersecting: true,
+        rootElement: null,
     }),
     methods: {
-        onIntersect(entries) {
-            this.isIntersecting = entries[0].intersectionRatio >= 1;
-            console.log('index - ', this.index, ': ', this.isIntersecting);
-        },
+    },
+    mounted() {
+        const right = this.$el.getBoundingClientRect().right;
+        this.$emit('mounted', {index: this.index, right});
     },
 }
 </script>
+<style lang="scss" scoped>
+.tag {
+    display: flex;
+    align-items: start;
+    &__icon {
+        margin-right: 5px;
+    }
+}
+</style>
