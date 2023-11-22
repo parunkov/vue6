@@ -1,4 +1,15 @@
-# vue6
+<!-- title: Тестовое задание -->
+<p>
+    <h1 align="center">Тестовое задание VueJS</h1>
+    <br>
+</p>
+
+
+## Демо-станица
+
+https://parunkov.github.io/vue6/
+
+## Задание
 
 ## Project setup
 ```
