@@ -53,7 +53,7 @@ export default {
   }
   &__item {
     width: 100%;
-    border: 1px solid gray;
+    border: 1px solid lightgray;
     padding: 5px 10px;
     margin-bottom: 10px;
     &_type_flex {

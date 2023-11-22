@@ -5,33 +5,48 @@
                 v-if="tag.id > 0" 
                 :key="tag.spacerKey" 
                 class="tags-list__spacer" 
-                :class="{'tags-list__spacer_hidden': tag.hidden}"
+                :class="{'tags-list__spacer_hidden': tag.hidden, 'tags-list__spacer_invisible': isResize}"
             >
-                <v-icon>mdi-circle-small</v-icon>
+                <v-icon color="black">mdi-circle-small</v-icon>
             </div>
-            <TagsItem 
-                :text="tag.text" 
-                :icon="tag.icon"
-                :index="tag.id" 
-                :key="tag.id" 
+            <div 
                 class="tags-list__tag" 
-                :class="{'tags-list__tag_hidden': tag.hidden}"
-                @mounted="onMounted"
-            />
+                :class="{'tags-list__tag_hidden': tag.hidden, 'tags-list__tag_invisible': isResize}"
+                :key="tag.id"
+            >
+                <div v-if="tag.icon" class="tags-list__tag-icon">
+                    <v-icon color="black">{{ tag.icon }}</v-icon>
+                </div>
+                <div class="tags-list__tag-text">{{ tag.text }}</div>
+            </div>
             
         </template>
     </div>
 </template>
 <script>
-import TagsItem from './TagsItem.vue';
 const checkRight = (object) => {
-    object.right = object.$el.getBoundingClientRect().right;
+    object.isSpace = false;
     object.tagsData.forEach((item) => {
-        console.log(item.right, ' - ', object.right);
-        if (item.right > object.right) item.hidden = true;
+        item.hidden = false;
     });
     object.elementKey += 1;
-    // console.log(object.elementKey);
+    setTimeout(() => {
+        object.right = object.$el.getBoundingClientRect().right;
+        const tagElements = object.$el.querySelectorAll('.tags-list__tag');
+            tagElements.forEach((item, index) => {
+            const right = item.getBoundingClientRect().right;
+            object.tagsData[index].right = right;
+            });
+        object.tagsData.forEach((item) => {
+            if (item.right > object.right) {
+                item.hidden = true;
+            } else {
+                item.hidden = false;
+            }
+        });
+        if (object.space) object.isSpace = true;
+        object.elementKey += 1;
+    }, 200);
 }
 export default {
     props: {
@@ -41,19 +56,10 @@ export default {
     data: () => ({
         tagsData: [],
         isSpace: false,
+        isResize: false,
         right: 0,
         elementKey: 0,
     }),
-    components: { TagsItem },
-    methods: {
-        onMounted(payload) {
-            console.log('mounted');
-            this.tagsData[payload.index].right = payload.right;
-            if (payload.index === this.tagsData.length - 1 && this.space) {
-                this.isSpace = true;
-            }
-        }
-    },
     created() {
         this.tagsData = this.tags.map((item, index) => ({
             id: index, 
@@ -63,11 +69,17 @@ export default {
         }));
     },
     mounted() {
-        // this.right = this.$el.getBoundingClientRect().right;
         checkRight(this);
+        let isResize;
         window.addEventListener('resize', () => {
-            // this.right = this.$el.getBoundingClientRect().right;
-            checkRight(this);
+            this.isResize = true;
+            clearTimeout(isResize)
+            isResize = setTimeout(() => {
+                setTimeout(() => {
+                    this.isResize = false;
+                }, 200);
+                checkRight(this);
+            }, 300);
         })
     },
 }
@@ -82,9 +94,16 @@ export default {
     }
     &__spacer,
     &__tag {
+        display: flex;
         &_hidden {
             display: none;
         }
+        &_invisible {
+            visibility: hidden;
+        }
+    }
+    &__tag-icon {
+        margin-right: 5px;
     }
 }
 </style>
